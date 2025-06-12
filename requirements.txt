@@ -10,3 +10,4 @@ tqdm
 markdown
 python-multipart
 setuptools
+pinecone-client
