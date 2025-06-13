@@ -45,16 +45,31 @@ from fastapi import Request
 
 @app.post("/")
 async def root_post(request: Request):
-    # You could extract the question/image from request.json() here if needed
-    return {
-        "answer": "This is a placeholder answer for the root POST endpoint.",
-        "links": [
-            {
-                "url": "https://discourse.onlinedegree.iitm.ac.in/",
-                "text": "Sample supporting link"
-            }
-        ]
-    }
+    if not API_KEY:
+        raise HTTPException(status_code=500, detail="AIPIPE_API_KEY not set")
+    try:
+        body = await request.json()
+        question = body.get("question")
+        image = body.get("image")
+
+        if not question:
+            return JSONResponse(status_code=400, content={"detail": "Missing question"})
+
+        embedding = await get_embedding(question)
+        results = await query_pinecone(embedding)
+
+        if not results:
+            return {"answer": "No relevant content found.", "links": []}
+
+        context_texts = [r["text"] for r in results]
+        answer = await call_llm(question, context_texts)
+        links = [{"url": r["url"], "text": r["text"]} for r in results]
+
+        return {"answer": answer, "links": links}
+    except Exception as e:
+        logger.error(traceback.format_exc())
+        raise HTTPException(status_code=500, detail=str(e))
+
 
 
 # Models
