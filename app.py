@@ -41,6 +41,10 @@ app.add_middleware(
 @app.get("/")
 def root():
     return {"message": "Welcome to the TDS Virtual TA API", "status": "ok"}
+@app.post("/")
+def root_post():
+    return {"message": "POST received at root", "status": "ok"}
+
 
 # Models
 class QueryRequest(BaseModel):
