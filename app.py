@@ -41,9 +41,20 @@ app.add_middleware(
 @app.get("/")
 def root():
     return {"message": "Welcome to the TDS Virtual TA API", "status": "ok"}
+from fastapi import Request
+
 @app.post("/")
-def root_post():
-    return {"message": "POST received at root", "status": "ok"}
+async def root_post(request: Request):
+    # You could extract the question/image from request.json() here if needed
+    return {
+        "answer": "This is a placeholder answer for the root POST endpoint.",
+        "links": [
+            {
+                "url": "https://discourse.onlinedegree.iitm.ac.in/",
+                "text": "Sample supporting link"
+            }
+        ]
+    }
 
 
 # Models
