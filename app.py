@@ -38,6 +38,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+@app.get("/")
+def root():
+    return {"message": "Welcome to the TDS Virtual TA API", "status": "ok"}
 
 # Models
 class QueryRequest(BaseModel):
